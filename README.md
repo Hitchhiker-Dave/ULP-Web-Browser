@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [![version](https://img.shields.io/badge/plugin%20version-0.9.0-blue)](https://github.com/fenix-hub/godot-engine.github-integration)
 [![updates](https://img.shields.io/badge/plugin%20updates-on%20discord-purple)](https://discord.gg/JNrcucg)
 [![paypal](https://img.shields.io/badge/donations-PayPal-cyan)](https://paypal.me/NSantilio?locale.x=it_IT)
@@ -47,3 +48,8 @@ I don't assume any responsibility for possible corruptions of your project. It i
 
 
 
+=======
+# ULP-Web-Browser
+MVP Code for a web browser version of Universal Lifepath Generator
+Currently only displays a list of random words; hope to add in a locking mechanic as well as an oracle system
+>>>>>>> 1990c2099da7ddb6593d750b386c5f0ffec6b70b
