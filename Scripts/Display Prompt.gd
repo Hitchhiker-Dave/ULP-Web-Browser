@@ -11,7 +11,7 @@ onready var Label = $Label
 
 var prompt_modifier = [""] #Minor Issue where the parents won't override these variables until 
 var prompt_noun = [""]		#the Reroll button is pressed
-
+var isLocked = false
 
 func newPrompt(var modifier, var noun):
 	return ( str(modifier[randi() % modifier.size()]) + " " + str(noun[randi() % noun.size()]) )
@@ -31,5 +31,5 @@ func _ready():
 	displayPrompt(prompt_modifier, prompt_noun)
 
 func _process(_delta):
-	if Input.is_action_just_released("Reroll"):
+	if Input.is_action_just_released("Reroll") and isLocked != true:
 		displayPrompt(prompt_modifier, prompt_noun)

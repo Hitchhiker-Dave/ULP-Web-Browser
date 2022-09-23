@@ -1,7 +1,6 @@
 extends Node2D
 
 onready var prompt = $Prompt
-onready var sibling_count = $Sibling_Count
 
 #technically not the proper logic for number siblings generated ?
 func _ready():
