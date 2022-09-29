@@ -29,8 +29,8 @@ func play_sound(sound):
 
 func update_lockstate():
 	if isLocked:
-			isLocked = false
-			play_sound(unlock)
+		isLocked = false
+		play_sound(unlock)
 			
 	elif isLocked == false:
 		isLocked = true
@@ -52,28 +52,30 @@ func _draw():
 	
 func _ready():
 	collision.shape.radius = radius
-	#Should include a thing to disable collision circle for background elements
+	#Disable Collision for certain instances
 	if isButton != true:
 		collider.visible = false
 	
 	update()
 
-#Hover Effect
+#Hover Effect/Mobile Lock Input
 func _on_Area2D_mouse_entered():
-	hovering = true
-	update()
+	if OS.has_feature("mobile") == true:
+		update_lockstate()
+	else:
+		hovering = true
+		update()
 
 func _on_Area2D_mouse_exited():
-	hovering = false
-	update()
+	if OS.has_feature("mobile") == true:
+		update_lockstate()
+	else:
+		hovering = false
+		update()
 
 #Custom Mouse Input/Locking Mechanism
 func _on_Area2D_input_event(_viewport, _event, _shape_idx): #should lookup what passed variables are for
 	if Input.is_action_pressed("Click"): 
-		update_lockstate()
-		
-	#(Hopefully allows for mobile browers to lock prompts)
-	elif OS.has_feature("mobile") == true and self.InputEventScreenTouch.is_pressed() == true: 
 		update_lockstate()
 		
 	update()
