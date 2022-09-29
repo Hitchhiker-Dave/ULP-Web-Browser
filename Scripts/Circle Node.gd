@@ -48,7 +48,7 @@ func _on_Area2D_mouse_exited():
 
 #Custom Mouse Input/Locking Mechanism
 func _on_Area2D_input_event(_viewport, _event, _shape_idx): #should lookup what passed variables are for
-	if Input.is_action_pressed("Click"):
+	if Input.is_action_pressed("Click") or InputEventScreenTouch.pressed == true:
 		if isLocked:
 			isLocked = false
 		elif isLocked == false:
