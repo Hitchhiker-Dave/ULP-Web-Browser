@@ -4,6 +4,7 @@ signal change_lock(lock_state)
 
 onready var collision = $Area2D/CollisionShape2D
 onready var collider = $Area2D
+onready var audio = $Audio
 
 onready var isLocked = false
 onready var hovering = false
@@ -16,6 +17,26 @@ var hoverSize = 1.5
 var center = Vector2(0, 0)
 var outerColor = Color(239,237,235)
 const edges: int = 8192
+
+#audio
+const unlock = preload("res://Sounds/unlockprompt.wav")
+const lock = preload("res://Sounds/lockprompt.wav")
+
+func play_sound(sound):
+	audio.stream = sound
+	audio.pitch_scale = rand_range(0.95, 1.05)
+	audio.play()
+
+func update_lockstate():
+	if isLocked:
+			isLocked = false
+			play_sound(unlock)
+			
+	elif isLocked == false:
+		isLocked = true
+		play_sound(lock)
+		
+	emit_signal("change_lock", isLocked)
 
 func _draw():
 	if isLocked:
@@ -48,12 +69,11 @@ func _on_Area2D_mouse_exited():
 
 #Custom Mouse Input/Locking Mechanism
 func _on_Area2D_input_event(_viewport, _event, _shape_idx): #should lookup what passed variables are for
-	if Input.is_action_pressed("Click") or InputEventScreenTouch.pressed == true:
-		if isLocked:
-			isLocked = false
-		elif isLocked == false:
-			isLocked = true
-			
-		emit_signal("change_lock", isLocked)
+	if Input.is_action_pressed("Click"): 
+		update_lockstate()
+		
+	#(Hopefully allows for mobile browers to lock prompts)
+	elif OS.has_feature("mobile") == true and self.InputEventScreenTouch.is_pressed() == true: 
+		update_lockstate()
 		
 	update()
