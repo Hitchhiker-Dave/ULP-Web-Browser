@@ -53,7 +53,7 @@ func _draw():
 	
 func _ready():
 	#check if on mobile platform or debuging mobile input
-	if OS.has_feature("mobile") == true or global.mouseDebug == true:
+	if OS.has_touchscreen_ui_hint() == true or global.mouseDebug == true:
 		isMobileEnvironment = true
 	
 	collision.shape.radius = radius
