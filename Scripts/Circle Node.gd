@@ -6,6 +6,7 @@ onready var collision = $Area2D/CollisionShape2D
 onready var collider = $Area2D
 onready var audio = $Audio
 
+onready var isMobileEnvironment = false
 onready var isLocked = false
 onready var hovering = false
 
@@ -37,7 +38,7 @@ func update_lockstate():
 		play_sound(lock)
 		
 	emit_signal("change_lock", isLocked)
-
+	
 func _draw():
 	if isLocked:
 		if hovering:
@@ -51,6 +52,10 @@ func _draw():
 			draw_arc(center, radius, 0, 360, edges, outerColor, line_width , true)
 	
 func _ready():
+	#check if on mobile platform or debuging mobile input
+	if OS.has_feature("mobile") == true or global.mouseDebug == true:
+		isMobileEnvironment = true
+	
 	collision.shape.radius = radius
 	#Disable Collision for certain instances
 	if isButton != true:
@@ -58,24 +63,25 @@ func _ready():
 	
 	update()
 
-#Hover Effect/Mobile Lock Input
+#Hover Effect
 func _on_Area2D_mouse_entered():
-	if OS.has_feature("mobile") == true:
-		update_lockstate()
-	else:
+	if isMobileEnvironment != true:
 		hovering = true
 		update()
 
 func _on_Area2D_mouse_exited():
-	if OS.has_feature("mobile") == true:
-		update_lockstate()
-	else:
+	if isMobileEnvironment != true:
 		hovering = false
 		update()
 
-#Custom Mouse Input/Locking Mechanism
+#Custom Mouse & Touch Screen Input/Locking Mechanism
+#Note: When testing on touch inputs on desktop, mouse causes it to lock and unlock rapidly
+#Should Disable and Renable mouse when testing touch inputs on screen: https://www.reddit.com/r/godot/comments/cyt8g1/how_do_i_disable_mouse_from_my_game/
 func _on_Area2D_input_event(_viewport, _event, _shape_idx): #should lookup what passed variables are for
-	if Input.is_action_pressed("Click"): 
+	if isMobileEnvironment and InputEventScreenTouch:
+		update_lockstate()
+
+	elif Input.is_action_pressed("Click"): 
 		update_lockstate()
 		
 	update()

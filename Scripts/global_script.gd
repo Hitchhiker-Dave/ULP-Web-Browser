@@ -157,3 +157,5 @@ var EVENT_NOUN = [
 	"Failure",
 	"Success",
 ]
+
+onready var mouseDebug = ProjectSettings.get_setting("input_devices/pointing/emulate_touch_from_mouse")
