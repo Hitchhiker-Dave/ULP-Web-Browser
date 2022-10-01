@@ -23,20 +23,20 @@ const edges: int = 8192
 const unlock = preload("res://Sounds/unlockprompt.wav")
 const lock = preload("res://Sounds/lockprompt.wav")
 
-func play_sound(sound):
+func play_sound(sound, pitchMin, pitchMax):
 	audio.stream = sound
-	audio.pitch_scale = rand_range(0.95, 1.05)
+	audio.pitch_scale = rand_range(pitchMin, pitchMax)
 	audio.play()
 
 func update_lockstate():
 	if isLocked:
 		isLocked = false
-		play_sound(unlock)
+		play_sound(unlock, 1.00, 1.05)
 			
 	elif isLocked == false:
 		isLocked = true
-		play_sound(lock)
-		
+		play_sound(lock, 0.95, 1.00)
+	
 	emit_signal("change_lock", isLocked)
 	
 func _draw():
@@ -55,33 +55,43 @@ func _ready():
 	#check if on mobile platform or debuging mobile input
 	if OS.has_touchscreen_ui_hint() == true or global.mouseDebug == true:
 		isMobileEnvironment = true
+		collision.shape.radius = radius * ( hoverSize + 1)
+		hovering = true
+		
+	else:
+		collision.shape.radius = radius
 	
-	collision.shape.radius = radius
 	#Disable Collision for certain instances
 	if isButton != true:
 		collider.visible = false
+		hovering = false
 	
 	update()
 
 #Hover Effect
 func _on_Area2D_mouse_entered():
-	if isMobileEnvironment != true:
-		hovering = true
-		update()
+	hovering = true
+	
+	#Checks if in mobile environment to so that mobile can lock prompts accurately
+	#Currently has issue where it can't immediately toggle and untoggle; Circle Node may need complete rework
+	#Maybe convert to a control node instead if people complain enough
+	if isMobileEnvironment == true:
+		update_lockstate()
+		
+	
+	update()
 
 func _on_Area2D_mouse_exited():
 	if isMobileEnvironment != true:
 		hovering = false
-		update()
-
-#Custom Mouse & Touch Screen Input/Locking Mechanism
-#Note: When testing on touch inputs on desktop, mouse causes it to lock and unlock rapidly
+		
+	
+	update()
+		
+#Custom Mouse Input Locking Mechanism
 #Should Disable and Renable mouse when testing touch inputs on screen: https://www.reddit.com/r/godot/comments/cyt8g1/how_do_i_disable_mouse_from_my_game/
 func _on_Area2D_input_event(_viewport, _event, _shape_idx): #should lookup what passed variables are for
-	if isMobileEnvironment and InputEventScreenTouch:
-		update_lockstate()
-
-	elif Input.is_action_pressed("Click"): 
+	if isMobileEnvironment != true and Input.is_action_pressed("Click"): 
 		update_lockstate()
 		
 	update()
